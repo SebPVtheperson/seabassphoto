@@ -1,72 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>seabass.photo</title>
+  <meta charset="UTF-8" />
+  <title>2-23-25 Ice Ride</title>
   <style>
     body {
       background-color: #008080;
       font-family: 'MS Sans Serif', sans-serif;
       margin: 0;
-      padding: 2rem;
-      color: black;
-    }
-
-    .window {
-      background: silver;
-      border: 2px solid black;
       padding: 1rem;
-      width: 300px;
-      margin: 2rem auto;
-      box-shadow: 4px 4px 0px #000;
+      color: black;
     }
 
-    .folder {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.3rem;
-      border: 1px solid #aaa;
-      background: #c0c0c0;
-      margin-bottom: 0.5rem;
+    .top-bar {
+      margin-bottom: 1rem;
+    }
+
+    .back-link {
+      color: white;
       text-decoration: none;
-      color: black;
+      background: black;
+      padding: 0.3rem 0.6rem;
+      border: 1px solid white;
       font-weight: bold;
     }
 
-    .folder:hover {
-      background: #a0a0a0;
+    h1, h2 {
+      color: white;
+      margin: 0.2rem 0;
     }
 
-    .icon {
-      width: 24px;
-      height: 24px;
-      background: url('https://i.imgur.com/9vTq9Ec.png') no-repeat center/contain;
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 10px;
+      margin-top: 1rem;
     }
 
-    .note {
-      font-size: 0.85rem;
-      margin: 0.5rem 0 1.2rem 0;
-      background: #f2f2f2;
-      padding: 0.5rem;
-      border: 1px dashed black;
+    .gallery img {
+      width: 100%;
+      border: 2px solid black;
+      box-shadow: 2px 2px 0 #000;
+      background: white;
     }
   </style>
 </head>
 <body>
-  <div class="window">
-    <h3>📁 My Galleries</h3>
-    <div class="note">
-      Open pic in new tab to see full res.<br>
-      Credit me on IG or FB please.<br>
-      Don’t put any wild filters on it please if you credit me.<br>
-      If you do, please note that you did in your upload.
-    </div>
-
-    <a class="folder" href="2-23-25-ice-ride.html">
-      <div class="icon"></div>2-23-25 Ice Ride
-    </a>
-    <!-- Add more folders here -->
+  <div class="top-bar">
+    <a class="back-link" href="index.html">← Back to Folders</a>
+    <h1>📸 2-23-25 Ice Ride</h1>
+    <h2>Open pic in new tab to see full res</h2>
   </div>
+
+  <div class="gallery" id="gallery"></div>
+
+  <script src="images22325iceride.js"></script>
 </body>
 </html>
