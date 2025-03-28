@@ -2,50 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>seabass.photo</title>
+  <title>Gallery</title>
   <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      background-color: #008080; /* Windows 95 teal */
-      height: 100%;
+    body {
+      background-color: #008080;
       font-family: 'MS Sans Serif', sans-serif;
-      color: black;
+      margin: 0;
+      padding: 1rem;
     }
 
-    .window {
-      width: 400px;
-      background: silver;
-      border: 2px solid #000;
-      box-shadow: 4px 4px 0px #000;
-      margin: auto;
-      position: absolute;
-      top: 0; left: 0; bottom: 0; right: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      box-sizing: border-box;
-      text-align: center;
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 10px;
+      margin-top: 2rem;
     }
 
-    .window::before {
-      content: 'seabass.photo';
-      position: absolute;
-      top: -24px;
-      left: 8px;
-      background: silver;
-      padding: 2px 6px;
-      font-weight: bold;
+    .gallery img {
+      width: 100%;
       border: 2px solid black;
-      border-bottom: none;
+      box-shadow: 2px 2px 0 #000;
+      background: white;
     }
   </style>
 </head>
 <body>
-  <div class="window">
-    <p>Welcome to seabass.photo</p>
-  </div>
+  <h1 style="color: white;">📸 seabass.photo</h1>
+  <div class="gallery" id="gallery"></div>
+
+  <script src="images22325iceride.js"></script>
+  <script>
+    const container = document.getElementById('gallery');
+    images.forEach(url => {
+      const img = document.createElement('img');
+      img.src = url;
+      container.appendChild(img);
+    });
+  </script>
 </body>
 </html>
