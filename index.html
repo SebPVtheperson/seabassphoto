@@ -1,43 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Gallery</title>
+  <meta charset="UTF-8">
+  <title>seabass.photo</title>
   <style>
     body {
       background-color: #008080;
       font-family: 'MS Sans Serif', sans-serif;
       margin: 0;
-      padding: 1rem;
+      padding: 2rem;
+      color: black;
     }
 
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 10px;
-      margin-top: 2rem;
-    }
-
-    .gallery img {
-      width: 100%;
+    .window {
+      background: silver;
       border: 2px solid black;
-      box-shadow: 2px 2px 0 #000;
-      background: white;
+      padding: 1rem;
+      width: 300px;
+      margin: 2rem auto;
+      box-shadow: 4px 4px 0px #000;
+    }
+
+    .folder {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem;
+      border: 1px solid #aaa;
+      background: #c0c0c0;
+      margin-bottom: 0.5rem;
+      text-decoration: none;
+      color: black;
+      font-weight: bold;
+    }
+
+    .folder:hover {
+      background: #a0a0a0;
+    }
+
+    .icon {
+      width: 24px;
+      height: 24px;
+      background: url('https://i.imgur.com/9vTq9Ec.png') no-repeat center/contain;
     }
   </style>
 </head>
 <body>
-  <h1 style="color: white;">📸 seabass.photo</h1>
-  <div class="gallery" id="gallery"></div>
-
-  <script src="images22325iceride.js"></script>
-  <script>
-    const container = document.getElementById('gallery');
-    images.forEach(url => {
-      const img = document.createElement('img');
-      img.src = url;
-      container.appendChild(img);
-    });
-  </script>
+  <div class="window">
+    <h3>📁 My Galleries</h3>
+    <a class="folder" href="2-23-25-ice-ride.html">
+      <div class="icon"></div>2-23-25 Ice Ride
+    </a>
+    <!-- Add more folders here later -->
+  </div>
 </body>
 </html>
