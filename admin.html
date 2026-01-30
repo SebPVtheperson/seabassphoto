@@ -101,7 +101,17 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password }),
         });
-        const data = await r.json();
+        let data;
+        try {
+          data = await r.json();
+        } catch {
+          if (r.status === 404) {
+            msg(errEl, 'Admin not deployed yet. Push your code and wait for Netlify to deploy.', true);
+            return;
+          }
+          msg(errEl, 'Server error (status ' + r.status + '). Check the deploy.', true);
+          return;
+        }
         if (data.token) {
           token = data.token;
           sessionStorage.setItem('admin_token', token);
@@ -112,7 +122,7 @@
           msg(errEl, data.error || 'Login failed', true);
         }
       } catch (e) {
-        msg(errEl, 'Network error', true);
+        msg(errEl, 'Cannot reach server. Are you on the live Netlify site? Try: ' + (e.message || 'network error'), true);
       }
     }
 
