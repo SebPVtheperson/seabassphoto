@@ -12,12 +12,41 @@
       color: black;
     }
 
+    .page-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .windows-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .window.window-wide {
+      width: 300px;
+    }
+
+    .note-inner {
+      font-size: 0.85rem;
+      margin: 0;
+      background: #d4d0c8;
+      padding: 0.75rem;
+      border: 2px inset #808080;
+      color: black;
+    }
+
     .window {
       background: silver;
       border: 2px solid black;
-      padding: 1rem;
+      padding: 0.4rem 1rem 1rem 1rem;
       width: 300px;
-      margin: 2rem auto;
       box-shadow: 4px 4px 0px #000;
     }
 
@@ -47,26 +76,178 @@
     .note {
       font-size: 0.85rem;
       margin: 0.5rem 0 1.2rem 0;
-      background: #f2f2f2;
+      background: #d4d0c8;
       padding: 0.5rem;
-      border: 1px dashed black;
+      border: 2px inset #808080;
     }
+
+    .sign-in-btn {
+      display: block;
+      width: 100%;
+      padding: 0.5rem 1rem;
+      margin-top: 1rem;
+      font-family: 'MS Sans Serif', sans-serif;
+      font-weight: bold;
+      font-size: 0.9rem;
+      background: #c0c0c0;
+      border: 2px outset #e0e0e0;
+      cursor: pointer;
+      text-align: center;
+      color: black;
+    }
+
+    .sign-in-btn:hover {
+      background: #a0a0a0;
+    }
+
+    .sign-in-btn:active {
+      border-style: inset;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-window {
+      background: silver;
+      border: 2px solid black;
+      padding: 1rem;
+      box-shadow: 4px 4px 0 #000;
+      width: 280px;
+    }
+    .modal-window h3 { margin: 0 0 0.75rem 0; }
+    .code-input {
+      width: 100%;
+      padding: 0.4rem;
+      font-family: inherit;
+      font-size: 1rem;
+      border: 2px inset #808080;
+      box-sizing: border-box;
+      margin-bottom: 0.75rem;
+    }
+    .modal-error { color: #c00; font-size: 0.85rem; margin-bottom: 0.5rem; display: none; }
+    .modal-buttons { display: flex; gap: 0.5rem; }
+    .modal-buttons button { flex: 1; }
+    .loading { color: #666; font-size: 0.9rem; }
   </style>
 </head>
 <body>
-  <div class="window">
-    <h3>📁 My Galleries</h3>
-    <div class="note">
-      Open pic in new tab to see full res.<br>
-      Credit @seabass.moto / @seabass.photo on IG or FB.<br>
-      Don’t put any wild filters on it please if you credit me.<br>
-      If you do, note that you did in your upload.
+  <div class="page-layout">
+    <div class="window window-wide">
+      <h3>⚠️ Usage &amp; Credit</h3>
+      <div class="note-inner">
+        Open pic in new tab to see full res.<br>
+        Credit @seabass.moto / @seabass.photo on IG or FB.<br>
+        Don't put any wild filters on it please if you credit me.<br>
+        If you do, note that you did in your upload.
+      </div>
     </div>
 
-    <a class="folder" href="2-23-25-ice-ride.html">
-      <div class="icon"></div>2-23-25 Ice Ride
-    </a>
-    <!-- Add more folders here -->
+    <div class="windows-container">
+      <div class="window">
+        <h3>📁 My Public Galleries</h3>
+        <div id="public-galleries">
+          <span class="loading">Loading...</span>
+        </div>
+      </div>
+
+      <div class="window">
+        <h3>🔒 Private Galleries</h3>
+        <div class="note">
+          Sign in to view your private photo galleries.
+        </div>
+        <button class="sign-in-btn" id="sign-in-btn">Sign In</button>
+      </div>
+    </div>
   </div>
+
+  <div class="modal-overlay" id="code-modal">
+    <div class="modal-window">
+      <h3>🔐 Enter Codeword</h3>
+      <p class="modal-error" id="modal-error"></p>
+      <form id="code-form">
+        <input type="password" class="code-input" id="code-input" placeholder="Codeword" autocomplete="off">
+        <div class="modal-buttons">
+          <button type="button" class="sign-in-btn" id="modal-cancel">Cancel</button>
+          <button type="submit" class="sign-in-btn">Go</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const API = '/.netlify/functions';
+    const modal = document.getElementById('code-modal');
+    const codeInput = document.getElementById('code-input');
+    const modalError = document.getElementById('modal-error');
+    const codeForm = document.getElementById('code-form');
+
+    document.getElementById('sign-in-btn').onclick = () => {
+      modalError.style.display = 'none';
+      modalError.textContent = '';
+      codeInput.value = '';
+      modal.classList.add('open');
+      codeInput.focus();
+    };
+
+    document.getElementById('modal-cancel').onclick = () => {
+      modal.classList.remove('open');
+    };
+
+    modal.onclick = (e) => {
+      if (e.target === modal) modal.classList.remove('open');
+    };
+
+    async function loadPublicGalleries() {
+      const el = document.getElementById('public-galleries');
+      try {
+        const r = await fetch(API + '/list-galleries');
+        const data = await r.json();
+        if (data.galleries && data.galleries.length) {
+          el.innerHTML = data.galleries.map(g =>
+            '<a class="folder" href="gallery.html?slug=' + encodeURIComponent(g.slug) + '"><div class="icon"></div>' + (g.title || g.slug) + '</a>'
+          ).join('');
+        } else {
+          el.innerHTML = '<a class="folder" href="2-23-25-ice-ride.html"><div class="icon"></div>2-23-25 Ice Ride</a>';
+        }
+      } catch {
+        el.innerHTML = '<a class="folder" href="2-23-25-ice-ride.html"><div class="icon"></div>2-23-25 Ice Ride</a>';
+      }
+    }
+    loadPublicGalleries();
+
+    codeForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const code = codeInput.value.trim();
+      if (!code) return;
+
+      modalError.style.display = 'none';
+      try {
+        const r = await fetch(API + '/validate-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code }),
+        });
+        const data = await r.json();
+        if (data.valid && data.galleries && data.galleries.length) {
+          sessionStorage.setItem('private_code', code);
+          sessionStorage.setItem('private_galleries', JSON.stringify(data.galleries));
+          location.href = 'private-view.html';
+        } else {
+          modalError.textContent = data.error || 'Invalid codeword';
+          modalError.style.display = 'block';
+        }
+      } catch (err) {
+        modalError.textContent = 'Unable to verify. Deploy to Netlify for private galleries.';
+        modalError.style.display = 'block';
+      }
+    };
+  </script>
 </body>
 </html>

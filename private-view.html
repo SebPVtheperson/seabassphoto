@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Private Galleries - seabass.photo</title>
+  <style>
+    body {
+      background-color: #008080;
+      font-family: 'MS Sans Serif', sans-serif;
+      margin: 0;
+      padding: 1rem;
+      color: black;
+    }
+    .top-bar { margin-bottom: 1rem; }
+    .back-link {
+      color: white;
+      text-decoration: none;
+      background: black;
+      padding: 0.3rem 0.6rem;
+      border: 1px solid white;
+      font-weight: bold;
+    }
+    h1, h2 { color: white; margin: 0.2rem 0; }
+    .window {
+      background: silver;
+      border: 2px solid black;
+      padding: 0.4rem 1rem 1rem 1rem;
+      width: 300px;
+      box-shadow: 4px 4px 0px #000;
+      margin: 2rem auto;
+    }
+    .folder {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem;
+      border: 1px solid #aaa;
+      background: #c0c0c0;
+      margin-bottom: 0.5rem;
+      text-decoration: none;
+      color: black;
+      font-weight: bold;
+    }
+    .folder:hover { background: #a0a0a0; }
+    .icon {
+      width: 24px;
+      height: 24px;
+      background: url('https://i.imgur.com/9vTq9Ec.png') no-repeat center/contain;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 10px;
+      margin-top: 1rem;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .gallery a img {
+      width: 100%;
+      border: 2px solid black;
+      box-shadow: 2px 2px 0 #000;
+      background: white;
+      display: block;
+    }
+    .error { color: #c00; margin: 1rem 0; }
+    .loading { color: white; margin: 2rem; }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <a class="back-link" href="index.html">← Back to Home</a>
+    <h1 id="page-title">🔒 Private Galleries</h1>
+    <h2 id="page-subtitle">Open pic in new tab to see full res</h2>
+  </div>
+
+  <div id="gallery-list"></div>
+  <div id="gallery-view"></div>
+
+  <script>
+    const API = '/.netlify/functions';
+    const code = sessionStorage.getItem('private_code');
+    const galleries = JSON.parse(sessionStorage.getItem('private_galleries') || '[]');
+    const urlSlug = new URLSearchParams(location.search).get('gallery');
+
+    function redirectToIndex() {
+      sessionStorage.removeItem('private_code');
+      sessionStorage.removeItem('private_galleries');
+      location.href = 'index.html';
+    }
+
+    if (!code || !galleries.length) {
+      redirectToIndex();
+    } else if (urlSlug) {
+      document.getElementById('page-title').textContent = '📸 Loading...';
+      document.getElementById('gallery-list').innerHTML = '';
+
+      fetch(`${API}/get-gallery?code=${encodeURIComponent(code)}&gallery=${encodeURIComponent(urlSlug)}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.error) {
+            document.getElementById('gallery-view').innerHTML = '<p class="error">' + (data.error || 'Failed to load') + '</p>';
+            document.getElementById('page-title').textContent = '🔒 Private Galleries';
+            return;
+          }
+          document.getElementById('page-title').textContent = '📸 ' + (data.title || urlSlug);
+          const div = document.createElement('div');
+          div.className = 'gallery';
+          (data.images || []).forEach(img => {
+            const url = typeof img === 'string' ? img : (img.full || img.url || img);
+            const thumb = typeof img === 'string' ? img : (img.thumb || img.url || img.full || img);
+            const a = document.createElement('a');
+            a.href = String(url);
+            a.target = '_blank';
+            const el = document.createElement('img');
+            el.src = String(thumb);
+            el.alt = (typeof img === 'object' && img.alt) ? img.alt : '';
+            a.appendChild(el);
+            div.appendChild(a);
+          });
+          document.getElementById('gallery-view').appendChild(div);
+        })
+        .catch(() => {
+          document.getElementById('gallery-view').innerHTML = '<p class="error">Could not load gallery. Make sure you are on Netlify with functions enabled.</p>';
+          document.getElementById('page-title').textContent = '🔒 Private Galleries';
+        });
+    } else {
+      document.getElementById('page-subtitle').style.display = 'none';
+      const list = document.getElementById('gallery-list');
+      const win = document.createElement('div');
+      win.className = 'window';
+      win.innerHTML = '<h3>📁 Your Private Galleries</h3>';
+      galleries.forEach(g => {
+        const a = document.createElement('a');
+        a.className = 'folder';
+        a.href = 'private-view.html?gallery=' + encodeURIComponent(g.slug);
+        a.innerHTML = '<div class="icon"></div>' + (g.title || g.slug);
+        win.appendChild(a);
+      });
+      list.appendChild(win);
+    }
+  </script>
+</body>
+</html>
