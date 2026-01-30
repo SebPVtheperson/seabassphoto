@@ -20,6 +20,7 @@ Galleries are stored in **Supabase**. Public galleries appear on the homepage; p
 2. Add environment variables:
    - `SUPABASE_URL` – your Supabase project URL
    - `SUPABASE_SERVICE_ROLE_KEY` – your Supabase service role or secret key
+   - `ADMIN_PASSWORD` – password for the admin panel at `/admin.html`
 3. Redeploy
 
 ## 3. Add Galleries in Supabase
@@ -48,6 +49,7 @@ Create a `.env` file (do not commit):
 ```
 SUPABASE_URL=https://xxx.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your_key
+ADMIN_PASSWORD=your_admin_password
 ```
 
 ## Fallback
