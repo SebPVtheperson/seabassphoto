@@ -1,3 +1,15 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+
+# Use 308 so POST stays POST when redirecting HTTP->HTTPS (301 turns POST into GET → 405)
+[[redirects]]
+  from = "http://seabass.photo/*"
+  to = "https://seabass.photo/:splat"
+  status = 308
+  force = true
+[[redirects]]
+  from = "http://www.seabass.photo/*"
+  to = "https://seabass.photo/:splat"
+  status = 308
+  force = true
