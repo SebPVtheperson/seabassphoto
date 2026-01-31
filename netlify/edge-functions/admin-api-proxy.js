@@ -2,7 +2,7 @@
 export default async (request, context) => {
   const url = new URL(request.url);
   const path = url.pathname;
-  const targetPath = path.replace(/^\/api\//, "/.netlify/functions/");
+  const targetPath = "/.netlify/functions/admin-galleries";
   const targetUrl = new URL(targetPath + url.search, url.origin);
 
   const proxyRequest = new Request(targetUrl, {
@@ -21,4 +21,4 @@ export default async (request, context) => {
   });
 };
 
-export const config = { path: "/api/*" };
+export const config = { path: "/api/admin-galleries" };

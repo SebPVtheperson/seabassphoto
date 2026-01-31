@@ -2,6 +2,14 @@
   publish = "."
   functions = "netlify/functions"
 
+[[edge_functions]]
+  function = "admin-login"
+  path = "/api/admin-login"
+
+[[edge_functions]]
+  function = "admin-api-proxy"
+  path = "/api/admin-galleries"
+
 # Use 308 so POST stays POST when redirecting HTTP->HTTPS (301 turns POST into GET → 405)
 [[redirects]]
   from = "http://seabass.photo/*"
