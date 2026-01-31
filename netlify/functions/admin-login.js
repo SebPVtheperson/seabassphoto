@@ -1,6 +1,11 @@
 const { createToken } = require("./_admin-auth");
 
-const CORS = { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" };
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Content-Type": "application/json",
+  "Cache-Control": "no-store, no-cache, must-revalidate",
+  "Pragma": "no-cache",
+};
 
 exports.handler = async (event) => {
   if ((event.httpMethod || "").toUpperCase() === "OPTIONS") {

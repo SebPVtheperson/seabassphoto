@@ -97,7 +97,7 @@
       const errEl = document.getElementById('login-error');
       if (!password) { msg(errEl, 'Enter password', true); return; }
       try {
-        const r = await fetch(API + '/admin-login', {
+        const r = await fetch(API + '/admin-login?t=' + Date.now(), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password }),

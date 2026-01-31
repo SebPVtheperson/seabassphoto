@@ -1,0 +1,3 @@
+# Don't cache serverless function responses
+/.netlify/functions/*
+  Cache-Control: no-store, no-cache, must-revalidate
