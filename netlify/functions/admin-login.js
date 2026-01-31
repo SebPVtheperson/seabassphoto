@@ -3,14 +3,11 @@ const { createToken } = require("./_admin-auth");
 const CORS = { "Access-Control-Allow-Origin": "*", "Content-Type": "application/json" };
 
 exports.handler = async (event) => {
-  const method = (event.httpMethod || "").toUpperCase();
-  if (method === "OPTIONS") {
+  if ((event.httpMethod || "").toUpperCase() === "OPTIONS") {
     return { statusCode: 204, headers: { ...CORS, "Access-Control-Allow-Methods": "POST, OPTIONS", "Access-Control-Allow-Headers": "Content-Type, Authorization" }, body: "" };
   }
-  if (method !== "POST") {
-    return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: "Method not allowed", received: method }) };
-  }
 
+  // Accept any method - body must contain password (GET has no body, so will fail)
   let body;
   try {
     body = JSON.parse(event.body || "{}");
