@@ -87,6 +87,7 @@
 
   <script>
     const API = '/.netlify/functions';
+    const ADMIN_API = '/api';  // Proxy path - avoids 405 on custom domain
     let token = sessionStorage.getItem('admin_token');
 
     function show(el, visible) { el.style.display = visible ? '' : 'none'; }
@@ -97,7 +98,7 @@
       const errEl = document.getElementById('login-error');
       if (!password) { msg(errEl, 'Enter password', true); return; }
       try {
-        const r = await fetch(API + '/admin-login?t=' + Date.now(), {
+        const r = await fetch(ADMIN_API + '/admin-login?t=' + Date.now(), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password }),
@@ -141,7 +142,7 @@
 
     async function loadGalleries() {
       try {
-        const r = await fetch(API + '/admin-galleries', { headers: authHeaders() });
+        const r = await fetch(ADMIN_API + '/admin-galleries', { headers: authHeaders() });
         if (r.status === 401) { logout(); return; }
         const data = await r.json();
         if (data.error) throw new Error(data.error);
@@ -193,7 +194,7 @@
       const errEl = document.getElementById('admin-error');
       const okEl = document.getElementById('admin-success');
       try {
-        const r = await fetch(API + '/admin-galleries', {
+        const r = await fetch(ADMIN_API + '/admin-galleries', {
           method: 'PATCH',
           headers: authHeaders(),
           body: JSON.stringify({ id, is_public: isPublic, codeword: isPublic ? null : codeword }),

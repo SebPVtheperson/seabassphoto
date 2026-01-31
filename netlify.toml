@@ -2,6 +2,12 @@
   publish = "."
   functions = "netlify/functions"
 
+# Proxy /api/* to functions - avoids 405 on direct functions path with custom domains
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
 # Use 308 so POST stays POST when redirecting HTTP->HTTPS (301 turns POST into GET → 405)
 [[redirects]]
   from = "http://seabass.photo/*"
